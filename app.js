@@ -39,7 +39,7 @@ app.post('/signup', (req, res) => {//posteos
                 password: `${req.body.password}`
             }
             //utilización de la libreria de JWT,  saing crea un tocken. 
-            jwt.sign({ user: user }, 'secretkey', { expiresIn: '32s' }, (err, token) => {
+            jwt.sign({ user: user }, 'secretkey', { expiresIn: '300s' }, (err, token) => {
                 if (err) {
                     // Manejo del error al generar el token
                     console.error('Error al generar el token:', err);
@@ -62,26 +62,75 @@ app.post('/signup', (req, res) => {//posteos
     
 });
 //unidervol es un metodo que esta llamada en intermedio-- se ejecuta cuando termina el miderwol.. se ejecutan las demas sentencias
-app.post('/signin', verifyToken, (req, res) => {//el logueo uuwuw 
-//creación de un usario.. insertamos en la base de daton
-     jwt.verify(req.token, 'secretkey', (err, authData) => {//verifica si contiene o no contiene un tocken valido uwu
-        if(err){
-            res.sendStatus(403);//en caso de que no sea valido imprime ell status 
-            res.sendFile(__dirname + '/public/error.html');
-        }else {
-            console.log('Token verificado con éxito');
-            res.json({
-                mensaje: "Post fue Creado",
-                authData: authData
-            });
-            res.sendFile(__dirname + '/index2');
-        }
-        
-    });
+// ... (otras rutas y configuraciones)
 
+// app.post('/signin', verifyToken, (req, res) => {
+//     // El middleware verifyToken ya ha colocado el token en req.token si existe
+//     if (req.token) {
+//         jwt.verify(req.token, 'secretkey', (err, authData) => {
+//             if (err) {
+//                 console.error('Error en la verificación del token:', err);
+//                 res.status(401).json({
+//                     auth: false,
+//                     message: 'Token inválido o expirado'
+//                 });
+//             } else {
+//                 console.log('Token verificado con éxito');
+//                 res.redirect(303,'/index.html');
+//             }
+//         });
+//     } else {
+//         res.status(401).json({
+//             auth: false,
+//             message: 'Token faltante'
+//         });
+//     }
+// });
+// ... (resto del código)
+
+
+app.post('/signin', (req, res) => {
+    const { username, password } = req.body;
+    //const token = req.headers.authorization; // Obtener el token desde el encabezado
+
+    // Validar si el usuario, la contraseña y el token están presentes
+    if (username === 'sharonrudas' && password) {
+        console.log('Password recibido:', password);
+        //console.log('Token recibido:', token);
+        console.log('Inicio de sesión exitoso para:', username);
+        res.redirect(303,'/index.html');
+        // Aquí deberías verificar el token usando jwt.verify()
+        // Por ejemplo:
+        // jwt.verify(token, 'secretkey', (err, decoded) => {
+        //     if (err) {
+        //         console.error('Error en la verificación del token:', err);
+        //         res.status(401).json({
+        //             auth: false,
+        //             message: 'Token inválido o expirado'
+        //         });
+        //     } else {
+        //         console.log('Token verificado con éxito');
+        //         // Si el token es válido, redirigir al usuario a la página deseada
+        //         res.redirect(303,'/index.html');
+        //     }
+        // });
+    } else {
+        res.status(401).json({
+            auth: false,
+            message: 'Credenciales incorrectas o password/token faltante'
+        });
+    }
 });
 
+
+
+
+
 // Authorization: Bearer <token>
+
+
+
+
 function verifyToken(req, res, next){//
     //valida si el token es real o bama.. el heder llama a la palabra reservada a autorización
     const bearerHeader = req.headers['authorization'];//define una constante llamada bodyHeader
