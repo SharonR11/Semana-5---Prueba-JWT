@@ -49,7 +49,7 @@ app.post('/signup', (req, res) => {//posteos
                 res.json({ token: token }); // Enviar el token como respuesta al cliente
             });
             //window.location.href = '/index.html'
-            res.redirect(303,'/index.html');
+            res.redirect(303,'/');
             
 
     }
